@@ -1,0 +1,9 @@
+crm/
+crm_parent/
+crm_parent02/
+crmProject/
+jedis/
+test01/
+**/target/
+**/*.iml
+**/.idea/

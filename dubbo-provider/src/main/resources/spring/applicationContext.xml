@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://dubbo.apache.org/schema/dubbo
+       http://dubbo.apache.org/schema/dubbo/dubbo.xsd
+">
+
+    <!--声明组件扫描器-->
+    <!--<context:component-scan base-package="com.bjpowernode.dubbo.service" />-->
+
+    <bean id="userService" class="com.bjpowernode.dubbo.service.impl.UserServiceImpl"></bean>
+
+    <!--dubbo配置-->
+    <!--配置注册服务到注册中心的应用的名称，本工程的名称-->
+    <dubbo:application name="dubbo-provider"/>
+    <!--配置协议，包含连接地址和端口以及使用的协议-->
+    <dubbo:protocol name="dubbo" port="20880"  />
+    <!--将服务发布到注册中心-->
+    <dubbo:registry address="zookeeper://192.168.184.128:2181" />
+    <!--发布的服务-->
+    <!--将服务发布到远程-->
+    <dubbo:service interface="com.bjpowernode.dubbo.service.UserService" ref="userService"/>
+
+    <!--iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii-->
+
+    <!--将服务发布到本地-->
+    <!--<dubbo:service interface="com.bjpowernode.dubbo.service.UserService" ref="userService" registry="N/A"/>-->
+
+    <context:property-placeholder location="classpath:properties/jdbc.properties" />
+    <!--声明DataSource-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+    </bean>
+
+    <!--声明SqlSessionFactoryBean-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!--引入mybatis的配置文件-->
+        <!--<property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />-->
+    </bean>
+
+    <!--声明MyBatis的扫描器-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        <property name="basePackage" value="com.bjpowernode.dubbo.dao" />
+    </bean>
+</beans>

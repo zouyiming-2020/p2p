@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://dubbo.apache.org/schema/dubbo
+       http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+
+    <!--SpringMVC配置文件-->
+    <!--声明组件扫描器-->
+    <context:component-scan base-package="com.bjpowernode.dubbo.controller"/>
+    <!--<context:component-scan base-package="com.bjpowernode.crm.workbench.web.controller"/>-->
+    <!--<context:component-scan base-package="com.bjpowernode.crm.exception"/>-->
+
+    <!--<context:component-scan base-package="com.bjpowernode.crm"/>-->
+    <!--声明视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--return "/user"-->
+        <property name="prefix" value="/WEB-INF/jsp" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <!--声明注解驱动-->
+    <mvc:annotation-driven/>
+
+    <!--加载dubbo配置-->
+    <dubbo:application name="dubbo-consumer" />
+
+    <!--从远程中获取服务-->
+    <!--注册中心的地址-->
+    <dubbo:registry address="zookeeper://192.168.184.128:2181" />
+
+    <dubbo:reference interface="com.bjpowernode.dubbo.service.UserService"
+                     id="uService"
+                     check="false"/>
+
+    <!--iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii-->
+
+    <!--从本地中获取服务-->
+    <!--dubbo基于接口创建动态代理对象进行调用-->
+    <!--
+        interface service的接口
+        id 当前对象的唯一标识
+        url 注册中心的地址，本地url
+        registry="N/A" 本地加载
+        check 启动时检查(true，默认值)/不检查(false)，启动工程，会自动检查注册中心中是否有该接口的服务，如果有没问题，如果没有则报错。
+    -->
+    <!--<dubbo:reference interface="com.bjpowernode.dubbo.service.UserService"-->
+                     <!--id="uService"-->
+                     <!--url="dubbo://localhost:20880"-->
+                     <!--registry="N/A"-->
+                     <!--check="false"/>-->
+
+</beans>
